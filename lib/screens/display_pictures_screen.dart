@@ -1,3 +1,4 @@
+// экран с выводом изображения и текста
 import 'dart:io';
 
 import 'package:flutter/material.dart';
