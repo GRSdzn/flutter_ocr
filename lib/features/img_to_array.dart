@@ -17,7 +17,8 @@ int argMax(List<double> list) {
   return indexMax;
 }
 
-Future<List<List<List<double>>>> imgToRGBMatrix(File croppedImageFile) async {
+Future<List<List<List<List<double>>>>> imgToRGBMatrix(
+    File croppedImageFile) async {
   final bytes = await croppedImageFile.readAsBytes();
   final decoder = img.JpegDecoder();
   final decodedImg = decoder.decodeImage(bytes);
@@ -44,41 +45,39 @@ Future<List<List<List<double>>>> imgToRGBMatrix(File croppedImageFile) async {
     imgArray.add(row);
   }
 
+  // Добавляем дополнительное измерение размера партии
+  List<List<List<List<double>>>> batchedImgArray = [imgArray];
+
   if (kDebugMode) {
-    print(imgArray);
+    print(
+        'Размер матрицы: ${batchedImgArray.length} x ${batchedImgArray[0].length} x ${batchedImgArray[0][0].length} x ${batchedImgArray[0][0][0].length}');
   }
 
-  return imgArray;
+  return batchedImgArray;
 }
 
 // Функция для преобразования категориальных данных в числовое значение
-dynamic convertCategoricalToNumber(List<List<double>> imgArray) {
-  if (imgArray.isEmpty || imgArray[0].isEmpty) return null;
+dynamic convertCategoricalToNumber(List<List<double>> array) {
+  if (array.isEmpty || array[0].isEmpty) return null;
 
-  int dotIndex = argMax(imgArray[0]);
-  imgArray = imgArray.sublist(1);
+  // Находим индекс максимального элемента в первой строке
+  int dotIndex = argMax(array[0]);
+  // Удаляем первую строку массива
+  array = array.sublist(1);
 
   List<String> numbers = [];
-  for (List<double> row in imgArray) {
+  // Проходим по оставшимся строкам массива
+  for (List<double> row in array) {
+    // Добавляем в список строковое представление индекса максимального элемента каждой строки
     numbers.add(argMax(row).toString());
   }
 
+  // Если точка должна быть установлена, превращаем число в double
   if (dotIndex > 0 && numbers.length > 1) {
     numbers.insert(numbers.length - dotIndex, ".");
     return double.parse(numbers.join());
   } else {
+    // Возвращаем число как int
     return int.parse(numbers.join());
   }
-}
-
-Future<dynamic> processImage(File croppedImageFile) async {
-  List<List<List<double>>> imgArray = await imgToRGBMatrix(croppedImageFile);
-
-  // Преобразование матрицы RGB в нужное представление
-  dynamic result =
-      convertCategoricalToNumber(imgArray.expand((row) => row).toList());
-  if (kDebugMode) {
-    print('категориальные значения$result');
-  }
-  return result;
 }

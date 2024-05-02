@@ -1,7 +1,5 @@
 // async tflite get tflite package
 import 'package:flutter/material.dart';
-import 'package:image/image.dart' as img;
-import 'package:tflite_flutter/tflite_flutter.dart';
 
 // функция для распознавания изображения
 class TFLiteUsage extends StatefulWidget {
