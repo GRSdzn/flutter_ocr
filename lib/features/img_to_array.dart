@@ -72,12 +72,17 @@ dynamic convertCategoricalToNumber(List<List<double>> array) {
     numbers.add(argMax(row).toString());
   }
 
-  // Если точка должна быть установлена, превращаем число в double
+  dynamic result;
   if (dotIndex > 0 && numbers.length > 1) {
     numbers.insert(numbers.length - dotIndex, ".");
-    return double.parse(numbers.join());
+    result = double.parse(numbers.join());
   } else {
-    // Возвращаем число как int
-    return int.parse(numbers.join());
+    result = int.parse(numbers.join());
   }
+
+  // Вывод результата в консоль
+  if (kDebugMode) {
+    print('Распознанное число: $result');
+  }
+  return result;
 }

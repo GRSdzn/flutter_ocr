@@ -50,8 +50,21 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     );
   }
 
+  bool _isCapturing = false;
+
   void _captureAndCrop() {
-    captureAndCropImage(_controller, imgWidth, imgHeight, context);
+    if (_isCapturing) {
+      // Если предыдущий захват еще не завершился, игнорируем новый запрос
+      return;
+    }
+
+    _isCapturing = true;
+    captureAndCropImage(_controller, imgWidth, imgHeight, context).then((_) {
+      _isCapturing = false;
+    }).catchError((error) {
+      _isCapturing = false;
+      // Обработка ошибки при захвате изображения
+    });
   }
 
   @override
